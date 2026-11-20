@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E2A25">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>استغفار</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap">
+<style>
+:root { --bg:#0E2A25; --surface:#153631; --track:#1F443D; --gold:#E0B866; --cream:#F5EFE0; --muted:#A9BDB5; --coral:#F29B7D; --line:#2C5249; --off:#5E7F76; color-scheme: dark; }
+html { background: var(--bg); }
+body { margin:0; background:var(--bg); color:var(--cream); font-family:'Tajawal',system-ui,sans-serif; font-size:16px;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:20px 28px; }
+.app { max-width:440px; margin:0 auto; display:flex; flex-direction:column; gap:16px; }
+.head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.head h1 { margin:0; font-size:26px; font-weight:800; }
+.date { font-size:14px; color:var(--muted); }
+.head-end { display:flex; align-items:center; gap:8px; }
+.pill { padding:8px 14px; border-radius:999px; background:var(--surface); color:var(--gold); font-size:14px; font-weight:700; white-space:nowrap; }
+.icon-btn { width:44px; height:44px; display:flex; align-items:center; justify-content:center; border:0; border-radius:14px; background:var(--surface); color:var(--cream); cursor:pointer; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
+.ring { position:relative; width:250px; height:250px; max-width:100%; align-self:center; }
+.ring svg { width:100%; height:100%; transform:rotate(-90deg); }
+.ring .fg { transition:stroke-dashoffset .2s; }
+.ring-text { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
+.big { font-size:54px; font-weight:800; line-height:1; font-variant-numeric:tabular-nums; }
+.sub { font-size:16px; color:var(--muted); }
+.pct { font-size:15px; font-weight:700; color:var(--gold); }
+.card { display:flex; flex-direction:column; gap:8px; padding:14px 16px; border-radius:20px; background:var(--surface); }
+.row { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.muted { color:var(--muted); font-size:14px; }
+.muted b { color:var(--cream); }
+.status { font-size:17px; font-weight:800; color:var(--gold); }
+.status.behind { color:var(--coral); }
+.hint { font-size:13px; color:var(--muted); line-height:1.6; }
+.tap { min-height:130px; padding:10px 16px; border:0; border-radius:28px; background:var(--gold); color:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; cursor:pointer; font-family:inherit; touch-action:manipulation; user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; }
+.tap:active { transform:scale(.98); }
+.tap .t1 { font-size:30px; font-weight:800; line-height:1.3; text-align:center; }
+.tap .t2 { font-size:16px; font-weight:700; }
+.pair { display:flex; gap:12px; }
+.ghost { flex:1; min-height:52px; border:1px solid var(--line); border-radius:16px; background:transparent; color:var(--cream); font-family:inherit; font-size:16px; font-weight:500; cursor:pointer; touch-action:manipulation; }
+.steps { display:flex; flex-direction:column; gap:8px; }
+.step { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:48px; padding:8px 14px; border:1px solid var(--line); border-radius:16px; background:transparent; color:var(--cream); font-family:inherit; font-size:15px; text-align:start; cursor:pointer; }
+.step b { color:var(--gold); font-variant-numeric:tabular-nums; white-space:nowrap; }
+.step.on { background:var(--gold); color:var(--bg); border-color:var(--gold); font-weight:700; }
+.step.on b { color:var(--bg); }
+.step.done { opacity:.7; }
+h2 { margin:0; font-size:16px; font-weight:700; }
+.bars { position:relative; height:96px; display:flex; align-items:flex-end; gap:8px; }
+.goal-line { position:absolute; left:0; right:0; border-top:1px dashed var(--off); }
+.bar { flex:1; min-width:0; border-radius:6px 6px 0 0; background:var(--off); }
+.bar.hit { background:var(--gold); }
+.labels { display:flex; gap:8px; }
+.labels span { flex:1; min-width:0; text-align:center; font-size:12px; color:var(--muted); }
+.settings { display:flex; flex-direction:column; gap:12px; }
+.field { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:52px; padding:0 16px; border-radius:16px; background:var(--surface); font-size:16px; }
+.field input[type=number], .field select { width:120px; min-height:40px; padding:0 10px; border:1px solid var(--line); border-radius:12px; background:var(--bg); color:var(--cream); font-family:inherit; font-size:16px; }
+.field input[type=checkbox] { width:24px; height:24px; accent-color:var(--gold); }
+.dl-row { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:48px; padding:0 8px 0 16px; border-radius:16px; background:var(--surface); font-size:15px; }
+.del { width:44px; height:44px; border:0; background:transparent; color:var(--coral); font-size:24px; cursor:pointer; }
+.addrow { display:flex; gap:8px; }
+.addrow input { flex:1; min-width:0; min-height:48px; padding:0 12px; border:1px solid var(--line); border-radius:14px; background:var(--bg); color:var(--cream); font-family:inherit; font-size:16px; }
+.addrow button { min-height:48px; padding:0 18px; border:0; border-radius:14px; background:var(--gold); color:var(--bg); font-family:inherit; font-size:16px; font-weight:700; cursor:pointer; }
+.danger { min-height:48px; border:1px solid var(--coral); border-radius:14px; background:transparent; color:var(--coral); font-family:inherit; font-size:16px; cursor:pointer; }
+.install { font-size:13px; color:var(--muted); text-align:center; line-height:1.6; margin:0; }
+</style>
+</head>
+<body>
+<script>
+window.onerror = function (m, s, l) {
+  var d = document.createElement('div');
+  d.style.cssText = 'background:#7a1f1f;color:#fff;padding:12px;font:14px sans-serif;direction:ltr;word-break:break-word';
+  d.textContent = 'Error: ' + m + ' (line ' + l + ')';
+  (document.body || document.documentElement).insertBefore(d, (document.body || document.documentElement).firstChild);
+};
+</script>
+<div class="app">
+  <div class="head">
+    <div>
+      <h1>الاستغفار</h1>
+      <div class="date" id="date"></div>
+    </div>
+    <div class="head-end">
+      <span class="pill" id="streak">0 يوم</span>
+      <button class="icon-btn" id="gear" type="button" aria-label="الإعدادات" aria-expanded="false" aria-controls="settings">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="ring">
+    <svg viewBox="0 0 250 250" fill="none" aria-hidden="true">
+      <circle cx="125" cy="125" r="108" stroke="#1F443D" stroke-width="16"/>
+      <circle class="fg" id="fg" cx="125" cy="125" r="108" stroke="#E0B866" stroke-width="16" stroke-linecap="round" stroke-dasharray="679" stroke-dashoffset="679"/>
+    </svg>
+    <div class="ring-text">
+      <span class="big" id="count">0</span>
+      <span class="sub" id="of"></span>
+      <span class="pct" id="pct">0%</span>
+    </div>
+  </div>
+
+  <button class="tap" id="tap" type="button">
+    <span class="t1" id="tapName">...</span>
+    <span class="t2" id="stepInfo"></span>
+  </button>
+
+  <div class="pair">
+    <button class="ghost" id="undo" type="button">تراجع</button>
+    <button class="ghost" id="add100" type="button">أضف 100</button>
+  </div>
+
+  <div class="card">
+    <h2>الترتيب</h2>
+    <div class="steps" id="steps"></div>
+    <span class="hint" id="istInfo"></span>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <span class="muted">إيقاع اليوم</span>
+      <span class="status" id="status"></span>
+    </div>
+    <div class="row">
+      <span class="muted">المفروض الآن <b id="expected">0</b></span>
+      <span class="muted">باقي <b id="left">0</b></span>
+    </div>
+    <span class="hint" id="hint"></span>
+  </div>
+
+  <div class="card">
+    <h2>آخر 7 أيام</h2>
+    <div class="bars" id="bars"></div>
+    <div class="labels" id="labels"></div>
+  </div>
+
+  <div class="settings" id="settings" hidden>
+    <h2>الإعدادات</h2>
+    <label class="field" for="goal"><span>الهدف اليومي</span><input id="goal" type="number" inputmode="numeric" min="100"></label>
+    <label class="field" for="start"><span>بداية اليوم</span><select id="start"></select></label>
+    <label class="field" for="end"><span>نهاية اليوم</span><select id="end"></select></label>
+    <h2>الأذكار قبل الاستغفار</h2>
+    <div id="dlist" style="display:flex;flex-direction:column;gap:8px"></div>
+    <div class="addrow">
+      <input id="newD" type="text" maxlength="80" placeholder="اسم الذكر" aria-label="اسم الذكر الجديد">
+      <input id="newT" type="number" inputmode="numeric" min="1" placeholder="العدد" aria-label="العدد المطلوب" style="flex:0 0 84px">
+      <button id="addD" type="button">إضافة</button>
+    </div>
+    <label class="field" for="vib"><span>اهتزاز عند كل ضغطة</span><input id="vib" type="checkbox"></label>
+    <label class="field" for="wake"><span>إبقاء الشاشة مضوية</span><input id="wake" type="checkbox"></label>
+    <button class="danger" id="reset" type="button">تصفير عدّ اليوم</button>
+  </div>
+
+  <p class="install">لتثبيته على هاتفك: من قائمة Chrome اختر «تثبيت التطبيق».</p>
+</div>
+
+<script>
+(function () {
+  var KEY = 'istighfar:r2';
+  var DEF = [
+    { id: 's1', name: 'الحمد لله', t: 300 },
+    { id: 's2', name: 'سبحان الله', t: 300 },
+    { id: 's3', name: 'الله أكبر', t: 300 },
+    { id: 's4', name: 'صلى الله عليه وسلم', t: 300 },
+    { id: 's5', name: 'رضيت بالله ربًّا وبالإسلام دينًا وبمحمد ﷺ نبيًّا', t: 50 }
+  ];
+  var S = { goal: 5250, start: 6, end: 22, vib: true, wake: false, steps: null, days: {}, sel: '', selDay: '' };
+  var CIRC = 2 * Math.PI * 108;
+
+  function $(id) { return document.getElementById(id); }
+  function num(v, d) { v = Number(v); return isFinite(v) ? v : d; }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function load() {
+    var o = null;
+    try { o = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+    if (o && typeof o === 'object') {
+      S.goal = Math.max(100, num(o.goal, S.goal));
+      S.start = num(o.start, S.start);
+      S.end = num(o.end, S.end);
+      S.vib = o.vib !== false;
+      S.wake = !!o.wake;
+      if (Array.isArray(o.steps)) {
+        S.steps = o.steps.filter(function (x) { return x && typeof x.id === 'string' && typeof x.name === 'string'; })
+          .map(function (x) { return { id: x.id, name: x.name, t: Math.max(0, num(x.t, 0)) }; });
+      }
+      if (o.days && typeof o.days === 'object') {
+        Object.keys(o.days).forEach(function (k) {
+          var v = o.days[k];
+          if (v && typeof v === 'object') {
+            var c = {};
+            Object.keys(v).forEach(function (id) { c[id] = Math.max(0, num(v[id], 0)); });
+            S.days[k] = c;
+          }
+        });
+      }
+      S.sel = typeof o.sel === 'string' ? o.sel : '';
+      S.selDay = typeof o.selDay === 'string' ? o.selDay : '';
+    }
+    if (!S.steps) S.steps = DEF.map(function (x) { return { id: x.id, name: x.name, t: x.t }; });
+  }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function key(d) { d = d || new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function fmt(n) { return Number(n).toLocaleString('en-US'); }
+  function hLabel(h) {
+    if (h === 0 || h === 24) return '12:00 ليلًا';
+    if (h < 12) return h + ':00 صباحًا';
+    if (h === 12) return '12:00 ظهرًا';
+    return (h - 12) + ':00 مساءً';
+  }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  // ---- الأذكار بالترتيب، والاستغفار آخر خطوة (المطلوب منه = الهدف ناقص الباقي)
+  function planned() { var s = 0; S.steps.forEach(function (x) { s += x.t; }); return s; }
+  function istTarget() { return Math.max(0, S.goal - planned()); }
+  function items() { return S.steps.concat([{ id: 'i', name: 'أستغفر الله', t: istTarget() }]); }
+  function today() { return S.days[key()] || {}; }
+  function ensure() { var k = key(); if (!S.days[k]) S.days[k] = {}; return S.days[k]; }
+  function totalOf(d) { var s = 0; items().forEach(function (x) { s += d[x.id] || 0; }); return s; }
+  function pending(x, d) { return x.t > 0 && (d[x.id] || 0) < x.t; }
+  function firstPending() {
+    var d = today(), list = items();
+    for (var i = 0; i < list.length; i++) if (pending(list[i], d)) return list[i].id;
+    return 'i';
+  }
+  function indexOf(id) {
+    var list = items();
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return i;
+    return -1;
+  }
+  function cur() { return indexOf(S.sel) >= 0 ? S.sel : firstPending(); }
+  function newDay() {
+    if (S.selDay !== key()) { S.selDay = key(); S.sel = firstPending(); save(); }
+  }
+  function advance(id) {
+    var d = today(), list = items();
+    for (var j = indexOf(id) + 1; j < list.length; j++) {
+      if (pending(list[j], d)) { S.sel = list[j].id; return; }
+    }
+    S.sel = firstPending();
+  }
+  function change(delta) {
+    var id = cur(), d = ensure(), item = items()[indexOf(id)];
+    var before = d[id] || 0;
+    d[id] = Math.max(0, before + delta);
+    var ks = Object.keys(S.days).sort();
+    while (ks.length > 60) delete S.days[ks.shift()];
+    S.sel = id;
+    if (delta > 0 && item.t > 0 && before < item.t && d[id] >= item.t) {
+      advance(id);
+      if (S.vib && navigator.vibrate) { try { navigator.vibrate([40, 60, 40]); } catch (e) {} }
+    }
+    save();
+  }
+  function buzz() { if (S.vib && navigator.vibrate) { try { navigator.vibrate(12); } catch (e) {} } }
+  function streak() {
+    var n = 0, d = new Date();
+    if (totalOf(S.days[key(d)] || {}) >= S.goal) n++;
+    for (var i = 0; i < 400; i++) {
+      d.setDate(d.getDate() - 1);
+      if (totalOf(S.days[key(d)] || {}) >= S.goal) n++; else break;
+    }
+    return n;
+  }
+
+  var wakeLock = null;
+  function applyWake() {
+    try {
+      if (S.wake && navigator.wakeLock && document.visibilityState === 'visible') {
+        navigator.wakeLock.request('screen').then(function (l) { wakeLock = l; }).catch(function () {});
+      } else if (!S.wake && wakeLock) { wakeLock.release(); wakeLock = null; }
+    } catch (e) {}
+  }
+
+  function renderSteps(d) {
+    var box = $('steps'), id = cur();
+    box.textContent = '';
+    items().forEach(function (x) {
+      var n = d[x.id] || 0, done = x.t > 0 && n >= x.t;
+      var b = el('button', 'step' + (x.id === id ? ' on' : '') + (done ? ' done' : ''));
+      b.type = 'button';
+      b.appendChild(el('span', null, x.name));
+      b.appendChild(el('b', null, (done ? '✓ ' : '') + fmt(n) + (x.t ? ' / ' + fmt(x.t) : '')));
+      b.addEventListener('click', function () { S.sel = x.id; save(); render(); });
+      box.appendChild(b);
+    });
+  }
+
+  function renderList() {
+    var box = $('dlist');
+    box.textContent = '';
+    S.steps.forEach(function (x) {
+      var row = el('div', 'dl-row');
+      row.appendChild(el('span', null, x.name + (x.t ? ' · ' + fmt(x.t) : '')));
+      var del = el('button', 'del', '×');
+      del.type = 'button';
+      del.setAttribute('aria-label', 'حذف ' + x.name);
+      del.addEventListener('click', function () {
+        S.steps = S.steps.filter(function (y) { return y.id !== x.id; });
+        save(); renderList(); render();
+      });
+      row.appendChild(del);
+      box.appendChild(row);
+    });
+  }
+
+  function render() {
+    newDay();
+    var g = S.goal, d = today(), tot = totalOf(d), prog = Math.min(1, tot / g);
+    var id = cur(), list = items(), idx = indexOf(id), it = list[idx];
+
+    $('fg').setAttribute('stroke-dasharray', CIRC.toFixed(1));
+    $('fg').setAttribute('stroke-dashoffset', (CIRC * (1 - prog)).toFixed(1));
+    $('count').textContent = fmt(tot);
+    $('of').textContent = 'من ' + fmt(g);
+    $('pct').textContent = Math.floor(prog * 100) + '%';
+    $('left').textContent = fmt(Math.max(0, g - tot));
+    $('streak').textContent = streak() + ' يوم';
+
+    $('tapName').textContent = it.name;
+    $('stepInfo').textContent = 'الخطوة ' + (idx + 1) + ' من ' + list.length + ' · ' + fmt(d[id] || 0) + (it.t ? ' / ' + fmt(it.t) : '');
+    renderSteps(d);
+    $('istInfo').textContent = 'الاستغفار = الهدف ' + fmt(g) + ' ناقص الأذكار ' + fmt(planned()) + ' = ' + fmt(istTarget());
+
+    var now = new Date(), nowH = now.getHours() + now.getMinutes() / 60;
+    var span = Math.max(1, S.end - S.start);
+    var frac = Math.max(0, Math.min(1, (nowH - S.start) / span));
+    var expected = Math.round(frac * g), diff = tot - expected, perHour = Math.round(g / span);
+    var st = $('status');
+    $('expected').textContent = fmt(expected);
+    if (tot >= g) {
+      st.textContent = 'تم الورد'; st.className = 'status';
+      $('hint').textContent = 'ما شاء الله، أتممت وردك اليوم.';
+    } else if (diff < 0) {
+      st.textContent = 'متأخر بـ ' + fmt(-diff); st.className = 'status behind';
+      $('hint').textContent = 'زيد حوالي ' + Math.ceil(-diff / 60) + ' دقيقة باش تلحق · ' + fmt(perHour) + ' في الساعة';
+    } else {
+      st.textContent = diff === 0 ? 'على الإيقاع' : 'متقدم بـ ' + fmt(diff); st.className = 'status';
+      $('hint').textContent = (nowH < S.start ? 'الإيقاع يبدأ الساعة ' + hLabel(S.start) : 'كمّل على نفس الإيقاع') + ' · ' + fmt(perHour) + ' في الساعة';
+    }
+
+    var vals = [], labs = [], base = new Date();
+    for (var i = 6; i >= 0; i--) {
+      var x = new Date(base.getFullYear(), base.getMonth(), base.getDate() - i);
+      vals.push(totalOf(S.days[key(x)] || {}));
+      labs.push(i === 0 ? 'اليوم' : x.toLocaleDateString('ar-u-nu-latn', { weekday: 'short' }));
+    }
+    var max = Math.max.apply(null, vals.concat([g * 1.2])), H = 96;
+    var html = '<div class="goal-line" style="bottom:' + Math.round(g / max * H) + 'px"></div>';
+    vals.forEach(function (v) {
+      html += '<div class="bar' + (v >= g ? ' hit' : '') + '" style="height:' + Math.max(2, Math.round(v / max * H)) + 'px"></div>';
+    });
+    $('bars').innerHTML = html;
+    $('labels').innerHTML = labs.map(function (l) { return '<span>' + l + '</span>'; }).join('');
+  }
+
+  function fillSelect(id, from, to, cur) {
+    var s = $(id), h = '';
+    for (var i = from; i <= to; i++) h += '<option value="' + i + '"' + (i === cur ? ' selected' : '') + '>' + hLabel(i) + '</option>';
+    s.innerHTML = h;
+  }
+  function addStep() {
+    var name = $('newD').value.trim();
+    if (!name) return;
+    var t = parseInt($('newT').value, 10);
+    S.steps.push({ id: 'u' + Date.now().toString(36), name: name.slice(0, 80), t: t > 0 ? t : 0 });
+    $('newD').value = ''; $('newT').value = '';
+    save(); renderList(); render();
+  }
+
+  load();
+  $('date').textContent = new Date().toLocaleDateString('ar-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long' });
+  $('goal').value = S.goal;
+  fillSelect('start', 3, 11, S.start);
+  fillSelect('end', 17, 23, S.end);
+  $('vib').checked = S.vib;
+  $('wake').checked = S.wake;
+  renderList();
+
+  $('tap').addEventListener('click', function () { buzz(); change(1); render(); });
+  $('undo').addEventListener('click', function () { change(-1); render(); });
+  $('add100').addEventListener('click', function () { buzz(); change(100); render(); });
+  $('addD').addEventListener('click', addStep);
+  $('newD').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e
